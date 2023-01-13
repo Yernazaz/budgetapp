@@ -14,7 +14,7 @@ struct CurrencyConverter: View {
         @State var base = "USD"
         @FocusState private var inputIsFocused: Bool
         
-        func makeRequest(showAll: Bool, currencies: [String] = ["USD", "GBP", "EUR", "KZT","RUB"]) {
+        func makeRequest(showAll: Bool, currencies: [String] = ["USD", "EUR", "KZT","RUB"]) {
             apiRequest(url: "https://api.exchangerate.host/latest?base=\(base)&amount=\(input)") { currency in
                 //print("ContentView", currency.rates)
                 var tempList = [String]()

@@ -11,24 +11,28 @@ import Firebase
 
 
 enum SheetAction: Identifiable {
-    
     var id: UUID {
         UUID()
     }
-    
     case add
     case edit(BudgetCategory)
 }
 
 struct ContentView: View {
     
+    @EnvironmentObject var dataManager: DataManager
     @Environment(\.managedObjectContext) private var viewContext
     @FetchRequest(fetchRequest: BudgetCategory.all) var budgetCategoryResults
     @State private var sheetAction: SheetAction?
     @State private var email = ""
     @State private var password = ""
     @State private var userIsloggedIn = false
-    
+    private var useremail: String? {
+        return Auth.auth().currentUser?.email
+    }
+    private var userid: String? {
+        return Auth.auth().currentUser?.uid
+    }
     
     var total: Double {
         budgetCategoryResults.reduce(0) { result, budgetCategory in
@@ -42,6 +46,7 @@ struct ContentView: View {
             
             Text(total as NSNumber, formatter: NumberFormatter.currency)
                 .fontWeight(.bold)
+//            это уже отдельный файл BudgetListView деген сонын ишинен карап озгертесин
             BudgetListView(budgetCategoryResults: budgetCategoryResults) { category in
                 sheetAction = .edit(category)
             } onDelete: { category in
@@ -53,14 +58,17 @@ struct ContentView: View {
                 }
             }
             .listStyle(.plain)
+//            всплывающее окно
             .sheet(item: $sheetAction, content: { sheetAction in
                 switch sheetAction {
                 case .add:
+//                    тоже отдельный файл AddBudgetCategoryView
                     AddBudgetCategoryView()
                 case .edit(let category):
                     AddBudgetCategoryView(budgetCategoryToEdit: category)
                 }
             })
+//            навбар сверху
             .toolbar {
                 
                 ToolbarItem(placement: .navigationBarLeading) {
@@ -69,7 +77,40 @@ struct ContentView: View {
                     }
                 }
                 
+                
+                ToolbarItem( ) {
+                    
+                    Button("Add Category") {
+                        sheetAction = .add
+                    }
+                }
+                
+                
+                if userid == "qzBKyRM2KQYGCccMnsvtJjSjtNF3"{
+                    ToolbarItem() {
+                        NavigationLink(destination: UsersListView()
+                                                    .environmentObject(dataManager)){
+                            Text("List of Users")
+                        }
+                    }
+                }
+                
+                
                 ToolbarItem() {
+                    NavigationLink(destination: AddComment()
+                                                .environmentObject(dataManager)){
+                        Text("Comments")
+                    }
+                }
+                
+                ToolbarItem() {
+                    NavigationLink(destination: UserProfile()
+                                                .environmentObject(dataManager)){
+                        Text(email)
+                    }
+                }
+                
+                ToolbarItem(placement: .navigationBarTrailing) {
                     Button{
                         logout()
                         Auth.auth().addStateDidChangeListener{auth, user in
@@ -78,16 +119,10 @@ struct ContentView: View {
                             }
                         }
                     }label: {
-                        Text("out")
+                        Text("Log out")
                             .padding(5.0)
                     }
-                }
-                
-                ToolbarItem(placement: .navigationBarTrailing) {
                     
-                    Button("Add Category") {
-                        sheetAction = .add
-                    }
                 }
             }
             
@@ -96,7 +131,7 @@ struct ContentView: View {
         }
     }
     
-    
+//    conten чисто для логин регистрации
     var content: some View {
         ZStack{
             VStack{
@@ -106,6 +141,7 @@ struct ContentView: View {
                     .foregroundColor(.blue)
                 SecureField("Password", text:  $password)
                     .frame(height: 50.0)
+                
                 Button{
                     register()
                     Auth.auth().addStateDidChangeListener{auth, user in
@@ -130,13 +166,6 @@ struct ContentView: View {
                         .padding(9.0)
                 }
             }
-            .onAppear{
-                Auth.auth().addStateDidChangeListener{auth, user in
-                    if user != nil{
-                        userIsloggedIn.toggle()
-                    }
-                }
-            }
         }
         .ignoresSafeArea()
     }
@@ -155,6 +184,7 @@ struct ContentView: View {
             if error != nil{
                 print(error!.localizedDescription)
             }
+            dataManager.addUser(userEmail: email, userId: result?.user.uid ?? "")
         }
     }
     
@@ -168,6 +198,7 @@ struct ContentView: View {
     }
     
 }
+
 
 
 struct ContentView_Previews: PreviewProvider {

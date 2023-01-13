@@ -17,7 +17,7 @@ struct BudgetListView: View {
         List {
             
             if !budgetCategoryResults.isEmpty {
-                
+//                каждый категориянын мани канша куртылганы жазылад мында типа
                 ForEach(budgetCategoryResults) { category in
                     let _ = print("\(category.id)")
                     NavigationLink(value: Route.detail(category)) {

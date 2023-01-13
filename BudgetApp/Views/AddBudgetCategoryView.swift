@@ -63,18 +63,22 @@ struct AddBudgetCategoryView: View {
         }
     }
     
+//    вот тут фронтенд делается
     var body: some View {
         let _ = print(Self._printChanges())
         NavigationStack {
             Form {
+//                инпут
                 TextField("Name", text: $name)
-                Slider(value: $total, in: 0...500, step: 50) {
+//                млайдер
+                Slider(value: $total, in: 0...10000, step: 50) {
                     Text("Total")
                 } minimumValueLabel: {
                     Text("$0")
                 } maximumValueLabel: {
-                    Text("$500")
+                    Text("$10000")
                 }
+//                значение слайдера
                 Text(total.formatAsCurrency())
                     .frame(maxWidth: .infinity, alignment: .center)
                 
@@ -92,6 +96,7 @@ struct AddBudgetCategoryView: View {
                     self.total = budgetCategoryToEdit.total
                 }
             }
+//            навбар
             .toolbar {
                 ToolbarItem(placement: .navigationBarLeading) {
                     Button("Cancel") {

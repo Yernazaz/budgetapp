@@ -13,6 +13,7 @@ struct BudgetSummaryView: View {
     
     var body: some View {
         let _ = print(Self._printChanges())
+//        ен устинде болатын общий куртылганы ау мау
         VStack {
             
             Text("\(budgetCategory.overSpent ? "Overspent": "Remaining") \(budgetCategory.remainingBudgetTotal.formatAsCurrency())")

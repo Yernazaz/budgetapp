@@ -24,6 +24,7 @@ struct TransactionListView: View {
         if transactions.isEmpty {
             Text("No transactions.")
         } else {
+//            типа лист всех транзакции там текст, HStack дегендерди озгерте аласын
             List {
                 ForEach(transactions) { transaction in
                     HStack {
